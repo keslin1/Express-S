@@ -1,7 +1,7 @@
 {
   "name": "Express Shipping",
   "short_name": "Express Shipping",
-  "description": "Kalkile frè pake Miami → Ayiti avèk fasil",
+  "description": "Kalkile frè koli w fasil",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#0D2B55",
@@ -16,7 +16,7 @@
       "purpose": "any maskable"
     },
     {
-      "src": "expressshipping.jpg",
+      "src": "expressshipping1.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
