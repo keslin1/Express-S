@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0D2B55" />
+  <meta name="description" content="Express Shipping - Kalkile frè koli an fasil" />
+  <title>Express Shipping</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/jpeg" href="expressshipping.jpg" />
+  <link rel="apple-touch-icon" href="expressshipping.jpg" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #0D2B55;
+      --navy-mid:  #1A3F72;
+      --blue:      #1F5BA8;
+      --gold:      #F0A500;
+      --gold-lt:   #FFBF2E;
+      --red:       #D42B2B;
+      --white:     #FFFFFF;
+      --gray-100:  #F4F6FA;
+      --gray-200:  #E2E8F2;
+      --gray-400:  #94A3B8;
+      --gray-600:  #475569;
+      --text:      #1E293B;
+      --success:   #16A34A;
+      --radius:    10px;
+      --shadow:    0 4px 24px rgba(13,43,85,.13);
+      --shadow-lg: 0 8px 40px rgba(13,43,85,.20);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      background: var(--gray-100);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ──────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--blue) 100%);
+      color: var(--white);
+      padding: 0;
+      box-shadow: var(--shadow-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 14px 20px 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--gold);
+      flex-shrink: 0;
+      background: var(--white);
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy);
+      font-size: 22px;
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    .header-text span {
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .header-badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: .5px;
+    }
+
+    /* ─── MAIN LAYOUT ─────────────────────────────────────────── */
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      display: grid;
+      gap: 18px;
+    }
+
+    /* ─── CARD ────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(90deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: var(--white);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    .card-header .icon {
+      font-size: 16px;
+    }
+
+    .card-body {
+      padding: 18px;
+    }
+
+    /* ─── FORM ELEMENTS ───────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-grid.full { grid-template-columns: 1fr; }
+
+    @media (max-width: 500px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea {
+      border: 1.5px solid var(--gray-200);
+      border-radius: 7px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--gray-100);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+      width: 100%;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--blue);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(31,91,168,.10);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 68px;
+    }
+
+    .field input.weight-input {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--navy);
+      border-color: var(--gold);
+      background: #FFFBF0;
+      padding: 12px;
+    }
+
+    .field input.weight-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(240,165,0,.15);
+      background: var(--white);
+    }
+
+    /* ─── RESULT ──────────────────────────────────────────────── */
+    .result-box {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      color: var(--white);
+      text-align: center;
+      margin-top: 14px;
+      display: none;
+      animation: fadeSlideIn .3s ease;
+    }
+
+    .result-box.visible { display: block; }
+
+    .result-label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.7);
+      margin-bottom: 4px;
+    }
+
+    .result-amount {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.1;
+    }
+
+    .result-detail {
+      margin-top: 10px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 7px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .result-detail-part {
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+    }
+
+    .result-detail-part strong {
+      color: var(--gold-lt);
+    }
+
+    .result-detail-sep {
+      font-size: 14px;
+      color: rgba(255,255,255,.4);
+    }
+
+    .result-detail-total {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    /* ─── BUTTONS ─────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: Arial, Helvetica, sans-serif;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+      letter-spacing: .3px;
+    }
+
+    .btn:active { transform: scale(.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: var(--white);
+      box-shadow: 0 3px 12px rgba(13,43,85,.25);
+    }
+
+    .btn-primary:hover { filter: brightness(1.12); box-shadow: 0 5px 18px rgba(13,43,85,.32); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%);
+      color: var(--navy);
+      box-shadow: 0 3px 12px rgba(240,165,0,.30);
+    }
+
+    .btn-gold:hover { filter: brightness(1.08); }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      padding: 6px 12px;
+      font-size: 11px;
+    }
+
+    .btn-danger:hover { background: var(--red); color: var(--white); }
+
+    .btn-full { width: 100%; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-row .btn { flex: 1; min-width: 120px; }
+
+    /* ─── HISTORY ─────────────────────────────────────────────── */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--gray-100);
+      transition: border-color .2s;
+      animation: fadeSlideIn .25s ease;
+    }
+
+    .history-item.invoiced {
+      background: #F0FDF4;
+      border-color: #86EFAC;
+    }
+
+    .history-item.invoiced .h-badge {
+      background: var(--success);
+    }
+
+    .h-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .h-info { flex: 1; min-width: 0; }
+
+    .h-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .h-desc {
+      font-size: 11px;
+      color: var(--gray-600);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+
+    .h-meta {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .h-amount {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .h-date {
+      font-size: 10px;
+      color: var(--gray-400);
+      margin-top: 1px;
+    }
+
+    .h-invoiced-tag {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--success);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--gray-400);
+    }
+
+    .empty-state .empty-icon { font-size: 32px; margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ─── HISTORY HEADER ROW ──────────────────────────────────── */
+    .section-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 18px 0;
+      font-size: 11px;
+      color: var(--gray-600);
+    }
+
+    .dot-invoiced {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--success);
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .dot-pending {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--navy);
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    /* ─── TOAST ───────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--navy);
+      color: var(--white);
+      padding: 11px 22px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      z-index: 999;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+      white-space: nowrap;
+      border-left: 4px solid var(--gold);
+    }
+
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── ANIMATIONS ──────────────────────────────────────────── */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── LEGEND ──────────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      gap: 14px;
+      font-size: 11px;
+      color: var(--gray-600);
+      align-items: center;
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .header-inner { padding: 12px 14px 10px; }
+      main { padding: 14px 10px 36px; gap: 14px; }
+      .card-body { padding: 14px; }
+      .result-amount { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-wrap">
+        <img src="expressshipping.jpg" alt="Express Shipping Logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="logo-placeholder" style="display:none;">✈</div>
+      </div>
+      <div class="header-text">
+        <h1>Express Shipping</h1>
+        <span>Miami → Ayiti</span>
+      </div>
+      <div class="header-badge">MV</div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ─── CALCULATOR CARD ────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">📦</span>
+        Kalkil frè koli
+      </div>
+      <div class="card-body">
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Non Kliyan</label>
+            <input type="text" id="clientName" placeholder="Ex: Benoit Gertrude" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>Pwa koli (lbs)</label>
+            <input type="number" id="weight" class="weight-input"
+                   placeholder="0.00" min="0" step="0.1"
+                   oninput="calculateLive()" />
+          </div>
+        </div>
+
+        <div class="form-grid full" style="margin-top:12px;">
+          <div class="field">
+            <label>Deskripsyon koli</label>
+            <textarea id="description" placeholder="Ex: Droum, katon, pakè, valiz..."></textarea>
+          </div>
+        </div>
+
+        <!-- Live Result -->
+        <div class="result-box" id="resultBox">
+          <div class="result-label">Total ou dwe peye</div>
+          <div class="result-amount" id="resultAmount">$0.00</div>
+          <div class="result-detail">
+            <span class="result-detail-part">
+              Pwa: <strong id="detailWeight">0</strong> lbs × <strong>$3.30</strong>
+              = <strong id="detailSub">$0.00</strong>
+            </span>
+            <span class="result-detail-sep">+</span>
+            <span class="result-detail-part">
+              Frè Fiks: <strong>$10.00</strong>
+            </span>
+            <span class="result-detail-sep">=</span>
+            <span class="result-detail-total" id="detailTotal">$0.00</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveToHistory()">
+            💾 Anrejistre
+          </button>
+          <button class="btn btn-gold" onclick="generateInvoice()">
+            🧾 Fè fich
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── HISTORY CARD ───────────────────────────────────────── -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">🗂</span>
+        Istorik 7 dènye jou
+      </div>
+
+      <div class="section-meta">
+        <div class="legend">
+          <span><span class="dot-pending"></span>Pa gen fich</span>
+          <span><span class="dot-invoiced"></span>Fich ki fèt</span>
+        </div>
+        <button class="btn btn-danger" onclick="clearHistory()">
+          🗑 Efase tout
+        </button>
+      </div>
+
+      <div class="card-body">
+        <div class="history-list" id="historyList">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+
+</body>
+</html>

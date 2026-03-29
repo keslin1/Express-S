@@ -1,0 +1,27 @@
+{
+  "name": "Express Shipping",
+  "short_name": "Express Shipping",
+  "description": "Kalkile frè pake Miami → Ayiti avèk fasil",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0D2B55",
+  "theme_color": "#0D2B55",
+  "orientation": "portrait-primary",
+  "lang": "ht",
+  "icons": [
+    {
+      "src": "expressshipping.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "expressshipping.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "utilities"],
+  "screenshots": []
+}
